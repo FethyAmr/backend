@@ -2,18 +2,6 @@ import express from 'express';
 const app = express();
 import cors from 'cors';
 
-app.use(express.json())
-app.use(cors())
-
-const debug = (req, res, next) => {
-    console.log("Server request")
-    next()
-}
-
-const port = 8000;
-app.listen(port, () => console.log('Server', port))
-
-
 const superHeros = [
     {
         name: "Iron Man",
@@ -40,3 +28,153 @@ const superHeros = [
         image: "https://aws.vdkimg.com/film/2/5/1/1/251170_backdrop_scale_1280xauto.jpg"
     }
 ]
+
+const debug = (req, res, next) => {
+    console.log("Server request")
+    next()
+}
+
+const transformName = (req, res, next) => {
+    req.body.name = req.body.name.toLowerCase()
+    next()
+}
+
+const isNameHeroValid = (req, res, next) => {
+    const name = req.params.name.toLowerCase()
+
+    const nameFound = superHeros.find(hero => {
+        return name.split(" ").join("") === hero.name.split(" ").join("").toLowerCase()
+    })
+
+    if (nameFound) {
+        next()
+    } else {
+        res.json({ message: "Le héros n'existe pas dans la base de donnée" })
+    }
+}
+
+const isPowerHeroValid = (req, res, next) => {
+    const name = req.params.name.toLowerCase()
+    const power = req.params.power.toLowerCase()
+
+    const nameFound = superHeros.find(hero => {
+        return name.split(" ").join("") === hero.name.split(" ").join("").toLowerCase()
+    })
+
+    const indexOfNameFound = superHeros.indexOf(nameFound)
+
+
+    const powerFound = superHeros[indexOfNameFound].power.find(power => {
+        return power.split(" ").join("") === power.split(" ").join("").toLowerCase()
+    })
+
+    if (powerFound) {
+        next()
+    } else {
+        res.json({ message: "Le héros n'a pas ce pouvoir !" })
+    }
+}
+
+const validateHero = (req, res, next) => {
+    const dataReceived = req.body
+
+    const keyOfDataReceived = Object.keys(dataReceived)
+
+    const keyFound = keyOfDataReceived.filter(elem => {
+
+        return superHeros[0][elem] === undefined
+    })
+
+    if (keyFound.length) {
+        res.json({ message: "Une ou plusieurs de tes keys n'existe pas" })
+    } else {
+        next()
+    }
+}
+
+app.use(express.json())
+app.use(cors())
+app.use(debug)
+
+
+app.get("/heroes", (req, res) => {
+    res.json(superHeros)
+})
+
+app.post("/heroes", transformName, (req, res) => {
+    let newHeroes = req.body
+
+    const arrayToVerify = superHeros.filter(hero => hero.name.toLowerCase() === newHeroes.name)
+
+    if (arrayToVerify.length) {
+        res.json({ message: "Cet héros existe déja !" })
+    } else {
+        superHeros.push(newHeroes)
+        res.json({ message: "Ok, héros ajouté" })
+    }
+})
+
+app.get("/heroes/:name", (req, res) => {
+    console.log(req.params.name);
+
+    let name = req.params.name.toLowerCase()
+
+
+    const nameFound = superHeros.filter(hero => {
+        return hero.name.split(" ").join("").toLowerCase() === name.split(" ").join("")
+    })
+
+    if (nameFound.length) {
+        res.json(nameFound)
+    } else {
+        res.json({ message: "Wrong name of heroes man !" })
+    }
+})
+
+app.delete("/heroes/:name", isNameHeroValid, (req, res) => {
+    const name = req.params.name.toLowerCase()
+
+    const nameFound = superHeros.find(hero => {
+        return name.split(" ").join("") === hero.name.split(" ").join("").toLowerCase()
+    })
+
+    const indexOfNameFound = superHeros.indexOf(nameFound)
+
+    superHeros.splice(indexOfNameFound, 1)
+
+    res.json({ message: `${nameFound.name} effacé correctement` })
+})
+
+app.put("/heroes/:name", isNameHeroValid, validateHero, (req, res) => {
+    const name = req.params.name.toLowerCase()
+    const dataReceived = req.body
+
+    const keyOfDataReceived = Object.keys(dataReceived)
+
+    const nameFound = superHeros.find(hero => {
+        return name.split(" ").join("") === hero.name.split(" ").join("").toLowerCase()
+    })
+
+    for (let i = 0; i < keyOfDataReceived.length; i++) {
+        nameFound[keyOfDataReceived[i]] = dataReceived[keyOfDataReceived[i]]
+    }
+
+    res.json({ message: `Ok, les informations sur ${nameFound.name} ont été changées` })
+
+})
+
+app.get("/heroes/:name/powers", (req, res) => {
+    let name = req.params.name.toLowerCase()
+
+
+    const nameFound = superHeros.filter(hero => {
+        return hero.name.split(" ").join("").toLowerCase() === name.split(" ").join("")
+    })
+
+    if (nameFound.length) {
+        res.json(nameFound[0].power)
+    } else {
+        res.json({ message: "Wrong name of heroes man !" })
+    }
+
+})
