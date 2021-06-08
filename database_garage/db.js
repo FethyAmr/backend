@@ -8,14 +8,14 @@ mongoose.connect("mongodb://localhost:27017/garage", (err) => {
     }
 })
 
-const carsSchema = mongoose.Schema({
+const carSchema = mongoose.Schema({
     brand: String,
     model: String,
     year: Number,
     create: { type: Date, default: Date.now }
 })
 
-const Car = mongoose.model("Car", carsSchema)
+const Car = mongoose.model("Car", carSchema)
 
 
 async function firstCarFunc() {
@@ -47,10 +47,10 @@ async function secondCarFunc() {
 
         const carSaved = await theCar.save()
 
-        console.log("Car added !");
+        console.log("Car added ");
 
     } catch (error) {
-        console.error("Error !!!", error)
+        console.error("Error !", error)
     }
 }
 
@@ -65,12 +65,46 @@ async function thirdCarFunc() {
 
         const carSaved = await theCar.save()
 
-        console.log("Car added !");
+        console.log("Car added ");
 
     } catch (error) {
-        console.error("Error !!!", error)
+        console.error("Error !", error)
     }
 }
 
+async function searchFunc() {
+    try {
 
+        const findCar = await Car.findById("60be23b70abbe2a40b393e8c")
+        console.log(findCar);
+
+    } catch (error) {
+        console.error("Error !", error)
+    }
+}
+
+async function updateFunc() {
+    try {
+        const updateCar = await Car.updateOne({ model: "Espace" }, { $set: { year: 2000 } })
+    } catch (error) {
+        console.error("Error !", error)
+    }
+}
+
+async function deleteFunc() {
+    try {
+        const deleteCar = await Car.deleteMany({ brand: "Renault" })
+    } catch (error) {
+        console.error("Error !", error)
+    }
+}
+
+async function insertManyFunc() {
+    try {
+        const insertCar = await Car.insertMany([
+            { brand: "Aston Martin", model: "DB9", year: 2010 },
+            { brand: "Range Rover", model: "Discovery Sport", year: 2017 }])
+    } catch (error) {
+        console.error("Error !", error)
+    }
 }
