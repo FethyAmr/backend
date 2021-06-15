@@ -155,3 +155,28 @@ app.delete('/hotels/:id', async (req, res) => {
 
 })
 
+app.put("/restaurants/:id", async (req, res) => {
+    try {
+        let idReceived = req.params.id
+        let newName = req.query.name
+
+        await Restaurant.findByIdAndUpdate(idReceived, { name: newName })
+        res.json({ message: 'Name changed !!!' })
+    } catch (error) {
+        console.error('Error PUT / restaurants / :id !!!', error);
+        res.json({ message: "Error PUT / restaurants / :id sorry !!!" })
+    }
+
+})
+
+app.delete("/restaurants/:id", async (req, res) => {
+    try {
+        let idReceived = req.params.id
+
+        await Restaurant.findByIdAndDelete(idReceived)
+        res.json({ message: 'Restaurant deleted' })
+    } catch (error) {
+        console.error('Error DELETE / restaurants / :id !!!', error);
+        res.json({ message: "Error DELETE / restaurants / :id sorry !!!" })
+    }
+})
