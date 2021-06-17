@@ -1,15 +1,14 @@
-const mongoose = require("mongoose")
+const mongoose = require('mongoose');
 
+mongoose.connect("mongodb://localhost:27017/validateur");
 
 const userSchema = mongoose.Schema({
-    username: String,
-    email: String,
+    username: {type: String, require: true},
+    email: {type: String, require: true},
     age: Number,
-    city: String,
-    date: { type: Date, default: Date.now }
+    city: [{ type: mongoose.Schema.Types.ObjectId, ref: 'City' }]
 })
 
-
-const User = mongoose.model("User", userSchema)
+const User = mongoose.model('User', userSchema)
 
 module.exports = User

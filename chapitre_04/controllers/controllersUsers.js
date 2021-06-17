@@ -8,7 +8,7 @@ const addUser = async (req, res) => {
         const profilUser = req.body
 
         if (!errors.isEmpty()) {
-            res.status(400).json({message : "There was a problem with your form please correct this"});
+            res.status(400).json({message : "There is a problem with your form please correct this"});
         } else {
             
             const cityFound = await City.findOne({name : profilUser.city})
@@ -18,7 +18,7 @@ const addUser = async (req, res) => {
             res.json({message : 'User added'})
         }
     } catch (error) {
-        res.status(500).json({ errorMessage: "There was a problem !!!" })
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
     }
 }
 
@@ -31,7 +31,7 @@ const sendUserByUsername = async (req, res) => {
         res.json(userFound)
 
     } catch (error) {
-        res.status(500).json({ errorMessage: "There was a problem !!!" })
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
     }
 }
 
@@ -39,8 +39,11 @@ const sendUserByEmail = async (req, res) => {
     try {
         res.json({message : 'yes !!'})
     } catch (error) {
-        res.status(500).json({ errorMessage: "There was a problem !!!" })
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
     }
 
 }
+
+
+
 module.exports = { addUser, sendUserByUsername, sendUserByEmail}
