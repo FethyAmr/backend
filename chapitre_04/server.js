@@ -1,4 +1,3 @@
-
 const express = require("express")
 const cors = require("cors")
 const mongoose = require("mongoose")
@@ -14,7 +13,7 @@ mongoose.connect("mongodb://localhost:27017/user", (err) => {
     }
 })
 
-const port = 8888
+const port = 8080
 
 const app = express()
 

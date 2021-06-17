@@ -1,4 +1,3 @@
-
 router.get("/add",
     expressValidator.body("username").isLength({ min: 4 }),
     expressValidator.body("email").isEmail(),
