@@ -69,7 +69,22 @@ const sendUserById = async (req, res, next) => {
     try {
         const value = req.params.valu
 
-        if
+        if (value.match(/^[0-9a-fA-F]{24}$/)) {
+            
+            const foundId = await User.findById(value).populate('city', 'name -_id').lean()
+
+            if (!foundId ) {
+                next()
+            } 
+                res.json(foundId)
+        }
+
+        next()
+    } catch (error) {
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
+    }
+}
+
 
 
 
