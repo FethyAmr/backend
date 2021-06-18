@@ -11,3 +11,4 @@ const studentsSchema = mongoose.Schema({
 const Student = mongoose.model("Student", studentsSchema)
 
 module.exports = Student  
+
