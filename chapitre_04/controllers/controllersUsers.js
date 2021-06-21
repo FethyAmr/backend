@@ -8,7 +8,7 @@ const addUser = async (req, res) => {
         const profilUser = req.body
 
         if (!errors.isEmpty()) {
-            res.status(400).json({ message: "There is a problem, please correct this" });
+            res.status(400).json({ message: "There was a problem with your form, please correct this" });
         } else {
 
             const cityFound = await City.findOne({ name: profilUser.city })
@@ -18,30 +18,8 @@ const addUser = async (req, res) => {
             res.json({ message: 'User added' })
         }
     } catch (error) {
-        res.status(500).json({ errorMessage: "There is a problem !!" })
+        res.status(500).json({ errorMessage: "There was a problem !!!" })
     }
-}
-
-const sendUserByUsername = async (req, res) => {
-    try {
-        const usernameReceived = req.params.username;
-
-        const userFound = await User.findOne({ username: usernameReceived }).populate('city', 'name -_id')
-
-        res.json(userFound)
-
-    } catch (error) {
-        res.status(500).json({ errorMessage: "There is a problem !!" })
-    }
-}
-
-const sendUserByEmail = async (req, res) => {
-    try {
-        res.json({ message: 'yes !!' })
-    } catch (error) {
-        res.status(500).json({ errorMessage: "There is a problem !!" })
-    }
-
 }
 
 const sendUserByEmail = async (req, res, next) => {
@@ -52,7 +30,7 @@ const sendUserByEmail = async (req, res, next) => {
             next()
         } else {
 
-            const findEmail = await User.findOne({ email: value }).populate('city', 'name -_id')
+            const findEmail = await User.findOne({ email: value }).populate('city', 'name -_id').lean()
 
             if (!findEmail) {
                 res.json({ message: "invalid email" })
@@ -61,44 +39,45 @@ const sendUserByEmail = async (req, res, next) => {
             res.json(findEmail)
         }
     } catch (error) {
-        res.status(500).json({ errorMessage: "There is a problem !!" })
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
     }
 }
 
 const sendUserById = async (req, res, next) => {
     try {
-        const value = req.params.valu
+        const value = req.params.value
 
         if (value.match(/^[0-9a-fA-F]{24}$/)) {
-
+            
             const foundId = await User.findById(value).populate('city', 'name -_id').lean()
 
-            if (!foundId) {
+            if (!foundId ) {
                 next()
-            }
-            res.json(foundId)
+            } 
+                res.json(foundId)
         }
 
         next()
     } catch (error) {
         res.status(500).json({ errorMessage: "There is a problem !!!" })
     }
-
-    const sendUserByUsername = async (req, res) => {
-        try {
-            const usernameReceived = req.params.value;
-
 }
 
+const sendUserByUsername = async (req, res) => {
+    try {
+        const usernameReceived = req.params.value;
 
+        const userFound = await User.findOne({ username: usernameReceived }).populate('city', 'name -_id')
 
+        if (!userFound) {
+            res.json({ message: "the username doesn't exist !" })
+        }
 
+        res.json(userFound)
 
+    } catch (error) {
+        res.status(500).json({ errorMessage: "There is a problem !!!" })
+    }
+}
 
-
-
-
-
-
-
-        module.exports = { addUser, sendUserByUsername, sendUserByEmail }
+module.exports = { addUser, sendUserByUsername, sendUserByEmail, sendUserById }
