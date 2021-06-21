@@ -81,3 +81,4 @@ const sendUserByUsername = async (req, res) => {
 }
 
 module.exports = { addUser, sendUserByUsername, sendUserByEmail, sendUserById }
+
